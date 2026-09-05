@@ -1,2 +1,0 @@
-INFO:    gocryptfs not found, will not be able to use gocryptfs
-/opt/conda/bin/python: can't open file '/home/bsa05/repo/DL_BSA_F/~/repo/DL_BSA_F/main.py': [Errno 2] No such file or directory

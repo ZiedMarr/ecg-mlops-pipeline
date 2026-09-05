@@ -1,7 +1,7 @@
 hydra-core
 hydra-submitit-launcher
 wandb
-numpy<2
+numpy<2  #it was numpy <2
 kaggle
 scikit-learn
 wfdb

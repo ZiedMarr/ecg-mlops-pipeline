@@ -1,1 +1,0 @@
-FATAL:   While checking container encryption: could not open image /home/bsa05/containers/python_container.sif: failed to retrieve path for /home/bsa05/containers/python_container.sif: lstat /home/bsa05/containers/python_container.sif: no such file or directory

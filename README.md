@@ -173,17 +173,6 @@ python main.py --model cnn1d --epochs 100 --class-weights --class-weight-mode sq
 python main.py --model resnet --epochs 100 --class-weights --class-weight-mode sqrt --learning-rate 5e-5 --weight-decay 5e-4 --optimizer adamw --scheduler warmup_cosine --warmup-epochs 5 --augment --recording-eval --early-stopping --early-stopping-metric recording_val_loss --patience 15 --experiment-name recording_eval
 ```
 
-On the Hydra cluster, the same final training can be submitted with:
-
-```bash
-sbatch scripts/run_m4_training.sh
-```
-
-After training, run the attention summary and 9x9 class matrix script:
-
-```bash
-sbatch scripts/run_attention_and_9x9.sh
-```
 
 ## Outputs
 
@@ -224,3 +213,7 @@ outputs/xai/cnn1d_recording_eval_attention_all_classes_attention_values.csv
 outputs/xai/cnn1d_recording_eval_attention_all_classes_attention_values.png
 outputs/xai/cnn1d_recording_eval_attention_all_classes_heatmap.png
 ```
+
+## Archive
+
+The models were originally trained on a University Cluster (Slurm + Apptainer) ; see archive/hpc/cluster/ for those job scripts.
