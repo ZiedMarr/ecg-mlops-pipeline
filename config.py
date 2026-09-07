@@ -50,7 +50,7 @@ def get_config():
             "optimizer": "adam",
             "scheduler": "none",
             "warmup_epochs": 0,
-            "device": "cuda",  # change to "cpu" if needed
+            "device": "cpu",  # change to "cpu" if needed
             "class_weights": False,
             "class_weight_mode": "full",
             "weight_decay": 0,

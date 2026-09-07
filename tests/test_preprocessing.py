@@ -6,9 +6,7 @@ from  matplotlib import pyplot as plt
 from config import get_config
 from transforms import stft_transform
 from config import STFT_PARAMS
-import numpy as np
-import torch
-import matplotlib.pyplot as plt
+
 import pytest
 
 from transforms import stft_transform
@@ -119,22 +117,23 @@ def plot_stft_comparison(sample_signal, lead_idx=1, fs=FS, configs=CONFIGS, save
     plt.show()
 
 if __name__ == "__main__":
+    test_segmentation()
     """
     subj = form_subject_dict(signals_path, ref_path, 1222)
     visualize_signal(subj["signals"], 11, True)
     visualize_signal(subj["signals"], 11, False)
     plt.pause(0.001)
     input("Press Enter to close...")
-    """
+    
     subj = form_subject_dict(signals_path, ref_path, 1222)
     subj["signals"] = preprocessing_pipeline(signal=subj["signals"])
     segments = segmentation(subject_dict=subj)
 
     sample_signal = torch.tensor(segments[0]["signals"])  # (12, segment_length)
     plot_stft_comparison(sample_signal)
-    """
+    
     transform = stft_transform(**STFT_PARAMS)
     out = transform(sample_signal)
     print(out.shape)  # (12, F, T)
     """
-
+    
