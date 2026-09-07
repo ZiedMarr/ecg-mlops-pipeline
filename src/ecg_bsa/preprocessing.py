@@ -5,7 +5,7 @@ import numpy as np
 import wfdb
 import pandas as pd
 import neurokit2 as nk
-from src.ecg_bsa.config import get_config
+from ecg_bsa.config import get_config
 from math import gcd
 from scipy.signal import resample_poly
 
@@ -297,6 +297,8 @@ def validate_processed_files(save_path, config):
     print("Processed output validation completed")
     print(f"Valid processed files: {valid_files}")
     print(f"Invalid processed files: {invalid_files}")
+
+    return valid_files, invalid_files
 
 
 def print_processed_label_statistics(save_path, config):
