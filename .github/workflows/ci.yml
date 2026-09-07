@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, CI/CD ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11.9"
+          cache: "pip"
+
+      - name: Install PyTorch (CPU wheel)
+        run: |
+          pip install --upgrade pip
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+
+      - name: Install remaining dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install -e .
+
+      - name: Run tests
+        run: pytest -v
+
+      # --- TODO (Part 3 dependency): once FastAPI + Docker exist ---
+      # - name: Build Docker image
+      #   run: docker build -t ecg-mlops-pipeline:ci .
+      #
+      # - name: Smoke test API
+      #   run: |
+      #     docker run -d -p 8000:8000 --name ecg-api ecg-mlops-pipeline:ci
+      #     sleep 5
+      #     curl --fail http://localhost:8000/health
+      #     docker stop ecg-api
