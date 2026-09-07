@@ -8,3 +8,4 @@ wfdb
 pandas
 neurokit2
 scipy
+pytest
