@@ -9,10 +9,10 @@ import numpy as np
 import torch
 from torch.utils.data import DataLoader
 
-from config import get_config
-from dataset import BiosignalDataset
-from models import get_model
-from training import evaluate, make_splits
+from src.ecg_bsa.config import get_config
+from src.ecg_bsa.dataset import BiosignalDataset
+from src.ecg_bsa.models import get_model
+from src.ecg_bsa.training import evaluate, make_splits
 
 
 CLASS_NAMES = ["Normal", "AF", "I-AVB", "LBBB", "RBBB", "PAC", "PVC", "STD", "STE"]

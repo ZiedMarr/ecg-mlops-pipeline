@@ -10,9 +10,9 @@ import torch
 import torch.nn.functional as F
 from scipy.signal import find_peaks
 
-from config import get_config
-from dataset import BiosignalDataset
-from models import get_model
+from src.ecg_bsa.config import get_config
+from src.ecg_bsa.dataset import BiosignalDataset
+from src.ecg_bsa.models import get_model
 
 LEAD_NAMES = ["I", "II", "III", "aVR", "aVL", "aVF", "V1", "V2", "V3", "V4", "V5", "V6"]
 

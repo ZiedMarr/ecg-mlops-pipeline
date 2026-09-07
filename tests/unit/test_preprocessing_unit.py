@@ -1,6 +1,6 @@
 
 import numpy as np
-from preprocessing import segmentation, get_labels, _z_score_norm
+from src.ecg_bsa.preprocessing import segmentation, get_labels, _z_score_norm
 import pytest
 
 def make_signal(n_samples, n_channels, seed=0):

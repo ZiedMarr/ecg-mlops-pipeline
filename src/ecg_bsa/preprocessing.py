@@ -5,7 +5,7 @@ import numpy as np
 import wfdb
 import pandas as pd
 import neurokit2 as nk
-from config import get_config
+from src.ecg_bsa.config import get_config
 from math import gcd
 from scipy.signal import resample_poly
 

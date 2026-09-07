@@ -1,6 +1,6 @@
 from pathlib import Path
 import pandas as pd
-from preprocessing import form_subject_dict
+from src.ecg_bsa.preprocessing import form_subject_dict
 
 TEST_DIR = Path(__file__).parent          # tests/integration/
 DATA_DIR = TEST_DIR.parent / "data"       # tests/data/

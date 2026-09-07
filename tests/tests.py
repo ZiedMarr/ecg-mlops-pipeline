@@ -1,6 +1,6 @@
-from preprocessing import unpack_signal, form_subject_dict
+from src.ecg_bsa.preprocessing import unpack_signal, form_subject_dict
 import os
-import config 
+import src.ecg_bsa.config as config 
 import numpy as np
 
 def set_data_paths() :

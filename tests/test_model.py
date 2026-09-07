@@ -1,9 +1,9 @@
 
 import torch
-from config import get_config
-from models import get_model
-from transforms import stft_transform
-from config import STFT_PARAMS
+from src.ecg_bsa.config import get_config
+from src.ecg_bsa.models import get_model
+from src.ecg_bsa.transforms import stft_transform
+from src.ecg_bsa.config import STFT_PARAMS
 
 config = get_config()
 config["model"]["name"] = "cnn_vit"

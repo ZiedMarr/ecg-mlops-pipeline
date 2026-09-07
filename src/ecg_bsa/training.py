@@ -15,10 +15,10 @@ from torch.utils.data import DataLoader, Subset
 import wandb
 
 
-from config import STFT_PARAMS
-from dataset import BiosignalDataset
-from models import get_model
-from transforms import stft_transform
+from src.ecg_bsa.config import STFT_PARAMS
+from src.ecg_bsa.dataset import BiosignalDataset
+from src.ecg_bsa.models import get_model
+from src.ecg_bsa.transforms import stft_transform
 from utils import (
     check_no_leakage,
     get_subject_ids,

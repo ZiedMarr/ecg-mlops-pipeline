@@ -1,15 +1,15 @@
-from preprocessing import segmentation, unpack_signal, preprocessing_pipeline, form_subject_dict
+from src.ecg_bsa.preprocessing import segmentation, unpack_signal, preprocessing_pipeline, form_subject_dict
 import numpy as np
 import torch
 import os
 from  matplotlib import pyplot as plt
-from config import get_config
-from transforms import stft_transform
-from config import STFT_PARAMS
+from src.ecg_bsa.config import get_config
+from src.ecg_bsa.transforms import stft_transform
+from src.ecg_bsa.config import STFT_PARAMS
 
 import pytest
 
-from transforms import stft_transform
+from src.ecg_bsa.transforms import stft_transform
 
 FS = 250  # sampling rate AFTER downsampling in your preprocessing pipeline
 
