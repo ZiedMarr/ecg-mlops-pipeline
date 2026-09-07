@@ -3,7 +3,7 @@ import pandas as pd
 from ecg_bsa.preprocessing import form_subject_dict, preprocessing_pipeline, segmentation, save_subject_file, validate_processed_files
 
 TEST_DIR = Path(__file__).parent          # tests/integration/
-DATA_DIR = TEST_DIR.parent / "data"       # tests/data/
+DATA_DIR = TEST_DIR.parent / "datatest"       # tests/data/
 
 
 def test_form_subject_dict_correct_labels_and_signal():
