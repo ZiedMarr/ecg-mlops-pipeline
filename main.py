@@ -3,8 +3,8 @@
 import argparse
 import os
 
-from src.ecg_bsa.config import get_config
-from src.ecg_bsa.training import run_experiment
+from ecg_bsa.config import get_config
+from ecg_bsa.training import run_experiment
 from utils import create_folders
 
 
