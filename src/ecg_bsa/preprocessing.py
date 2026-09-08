@@ -14,78 +14,13 @@ cfg = get_config()
 sampling_rate = cfg["dataset"]["sampling_rate"]
 
 
-def preprocess_dataset(config):
-    #set paths
-    raw_path = config["paths"]["raw_data"]
-    signals_path = os.path.join(raw_path, "Training_WFDB")
-    ref_path = os.path.join(raw_path, "REFERENCE.csv")
-    reference_df = pd.read_csv(ref_path)
-    save_path = config["paths"]["processed_data"]
-    clear_processed_files(save_path)
-
-    #set number of subjects
-    num_pat = config["raw_dataset"]["num_subjects"]
-    segment_size = config["dataset"]["segment_length"]
-    overlap_ratio = config["preprocess"]["overlap_ratio"]
-
-    print(f"Segment length: {segment_size} samples")
-    print(f"Using overlap ratio: {overlap_ratio}")
-
-    subjects_processed = 0
-    subjects_skipped = 0
-    total_segments = 0
-
-    for i in range(1, num_pat +1):
-        subject_id = f"A{i:04d}"
-        print(f"Processing {subject_id} ({i}/{num_pat})")
-        try:
-            subject_dict = form_subject_dict(signals_path=signals_path, reference_df=reference_df, subject_number=i, config=config)
-            subject_dict["signals"] = preprocessing_pipeline(subject_dict["signals"], config=config)
-            segmented_list = segmentation(subject_dict=subject_dict, segment_size=segment_size, overlap_ratio=overlap_ratio)
-            segments_saved = save_subject_file(segmented_list, config=config)
-        except Exception as e:
-            #TODO: for Prefect include retry/failure isolation
-            print(f"Skipping {subject_id}: {e}")
-            subjects_skipped += 1
-            continue
-
-        if segments_saved == 0:
-            subjects_skipped += 1
-            print(f"Skipping {subject_id}: no segments created")
-            continue
-
-        subjects_processed += 1
-        total_segments += segments_saved
-
-    print("Pre-processing completed")
-    print(f"Subjects processed: {subjects_processed}")
-    print(f"Subjects skipped: {subjects_skipped}")
-    print(f"Total segments saved: {total_segments}")
-    validate_processed_files(save_path, config)
-    print_processed_label_statistics(save_path, config)
-
-
-def form_subject_dict(signals_path, reference_df=None, subject_number=None, config=None, ref_path=None):
-    """
-    returns: 
-        a directory that contains : subject_id, signals, labels
-    """
-    #set file name
+def form_subject_dict(signals_path, reference_df, subject_number, expected_num_classes):
     subject_id = f"A{subject_number:04d}"
-    #set signal file path
     sig_file_path = os.path.join(signals_path, subject_id)
-    #get signals
     signals, _ = unpack_signal(sig_file_path)
-    #get labels
-    if isinstance(reference_df, str):
-        reference_df = pd.read_csv(reference_df)
-    elif reference_df is None:
-        reference_df = pd.read_csv(ref_path)
-    labels = get_labels(reference_df, subject_number, config=config)
-    # form subject dict:
-    subject_dict = { "subject_id" :  subject_id , "signals" : signals , "labels" : labels}
-        
-    return subject_dict
+    labels = get_labels(reference_df, subject_number, expected_num_classes)
+    return {"subject_id": subject_id, "signals": signals, "labels": labels}
+
 
 
 def clear_processed_files(save_path):
@@ -115,41 +50,21 @@ def unpack_signal(file_path):
     return signals, sig_len
 
 
-def get_labels(reference_df, idx, config=None):
-    """
-    for an index (corresponds to a subject), returns the labels as a multi-hot vector
-    """
-    if config is None:
-        config = cfg
-    #get the labels
-    row = reference_df.iloc[idx-1]
+def get_labels(reference_df, idx, expected_num_classes):
+    row = reference_df.iloc[idx - 1]
     labels = row[["First_label", "Second_label", "Third_label"]].dropna().astype(int).tolist()
-    multi_hot_labels = np.zeros(config["dataset"]["num_classes"], dtype=np.float32)
-
+    multi_hot_labels = np.zeros(expected_num_classes, dtype=np.float32)
     for label in labels:
         multi_hot_labels[label - 1] = 1
-    
-    return  multi_hot_labels
+    return multi_hot_labels
 
 
-def preprocessing_pipeline(signal, config=None):
-    #TODO : test
-    """
-    Applies Filters channel-wise
-    """
-    if config is None:
-        config = cfg
-    # Notch Filter : removing Powerline 
-    filtered = _notch(signal, config)
-    # bandpass butterworth filter
-    filtered = _butterworth(filtered, config)
-    #downsample signal
-    down_sampeled = _downsample(filtered, config)
-    #z_score_norm
-    normalized = _z_score_norm(down_sampeled)
-    
+def preprocessing_pipeline(signal, filter_params):
+    filtered = _notch(signal, filter_params)
+    filtered = _butterworth(filtered, filter_params)
+    down_sampled = _downsample(filtered, filter_params)
+    return _z_score_norm(down_sampled)
 
-    return normalized
 
 
 def _baseline_wander_remove(signal, config=None):
@@ -161,38 +76,26 @@ def _baseline_wander_remove(signal, config=None):
     return filtered
 
 
-def _notch(signal, config=None):
-    if config is None:
-        config = cfg
-    sampling_rate = config["dataset"]["sampling_rate"]
-    powerline = config["preprocess"]["powerline"]
-     # Notch Filter : removing Powerline 
-    filtered = np.stack([nk.signal_filter(signal[:,c], sampling_rate, method='powerline', powerline=powerline) for c in range(signal.shape[1])], axis=1)
-    return filtered
+def _notch(signal, filter_params):
+    sampling_rate = filter_params["sampling_rate"]
+    powerline = filter_params["powerline"]
+    return np.stack([nk.signal_filter(signal[:, c], sampling_rate, method='powerline', powerline=powerline)
+                      for c in range(signal.shape[1])], axis=1)
 
 
-def _butterworth(signal, config=None):
-    if config is None:
-        config = cfg
-    sampling_rate = config["dataset"]["sampling_rate"]
-    lowcut = config["preprocess"]["lowcut"]
-    highcut = config["preprocess"]["highcut"]
-    # bandpass butterworth filter
-    filtered = np.stack([nk.signal_filter(signal[:,c], sampling_rate, lowcut=lowcut, highcut=highcut, method='butterworth') for c in range(signal.shape[1])], axis=1)
-    return filtered
+def _butterworth(signal, filter_params):
+    sampling_rate = filter_params["sampling_rate"]
+    lowcut = filter_params["lowcut"]
+    highcut = filter_params["highcut"]
+    return np.stack([nk.signal_filter(signal[:, c], sampling_rate, lowcut=lowcut, highcut=highcut, method='butterworth')
+                      for c in range(signal.shape[1])], axis=1)
 
 
-def _downsample(signal, config=None):
-    if config is None:
-        config = cfg
-    #get the fs rates
-    original_fs = config["dataset"]["sampling_rate"]
-    target_fs = config["preprocess"]["downsampled_rate"]
-    # greatest common denominator
+def _downsample(signal, filter_params):
+    original_fs = filter_params["sampling_rate"]
+    target_fs = filter_params["downsampled_rate"]
     g = gcd(original_fs, target_fs)
-    # get the downsampling coefficients
-    up = target_fs // g
-    down = original_fs // g
+    up, down = target_fs // g, original_fs // g
     return resample_poly(signal, up, down, axis=0)
 
 
@@ -268,10 +171,9 @@ def save_subject_file(subject_dict, config=None):
     return len(subject_dict)
 
 
-def validate_processed_files(save_path, config):
-    expected_channels = config["dataset"]["input_channels"]
-    expected_segment_length = config["dataset"]["segment_length"]
-    expected_num_classes = config["dataset"]["num_classes"]
+def validate_processed_files(save_path, expected_channels = 12,
+        expected_segment_length=1500,
+        expected_num_classes = 9):
     valid_files = 0
     invalid_files = 0
 
@@ -302,8 +204,7 @@ def validate_processed_files(save_path, config):
     return valid_files, invalid_files
 
 
-def print_processed_label_statistics(save_path, config):
-    num_classes = config["dataset"]["num_classes"]
+def print_processed_label_statistics(save_path, num_classes):
     label_segment_counts = np.zeros(num_classes, dtype=int)
     total_segments = 0
 

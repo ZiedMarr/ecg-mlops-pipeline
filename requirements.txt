@@ -9,3 +9,4 @@ pandas
 neurokit2
 scipy
 pytest
+prefect
