@@ -44,6 +44,7 @@ def preprocess_dataset(config):
             segmented_list = segmentation(subject_dict=subject_dict, segment_size=segment_size, overlap_ratio=overlap_ratio)
             segments_saved = save_subject_file(segmented_list, config=config)
         except Exception as e:
+            #TODO: for Prefect include retry/failure isolation
             print(f"Skipping {subject_id}: {e}")
             subjects_skipped += 1
             continue
