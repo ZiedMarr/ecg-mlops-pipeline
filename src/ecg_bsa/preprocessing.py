@@ -149,10 +149,8 @@ def segmentation(subject_dict : dict, segment_size=None, overlap_ratio=None):
     return dicts_list
 
 
-def save_subject_file(subject_dict, config=None):
-    if config is None:
-        config = cfg
-    save_path = config["paths"]["processed_data"]
+def save_subject_file(subject_dict, save_path):
+
     os.makedirs(save_path, exist_ok=True)
 
     if len(subject_dict) == 0:

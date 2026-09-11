@@ -11,15 +11,15 @@ def get_config():
         },
         "paths": {
             "raw_data": "./tests/datatest/",
-            "processed_data": "./data/processed/",
+            "processed_data": "./tmp/test/",
             "outputs": "./outputs/",
             "checkpoints": "./outputs/models/",
             "results": "./outputs/results/",
             "plots": "./outputs/plots/"
         },
         "raw_dataset": {
-            "num_subjects" : 6877,
-            "name" : "Physionet Challenge China 2018"
+            "num_subjects" : 3,
+            "name" : "Physionet Challenge China 2018 Test"
 
         },
 
