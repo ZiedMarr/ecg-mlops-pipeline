@@ -55,7 +55,7 @@ def test_get_labels_all_three_present():
     })
     fake_config = {"dataset": {"num_classes": 9}}
 
-    result = get_labels(reference_df, idx=1, config=fake_config)
+    result = get_labels(reference_df, idx=1, expected_num_classes=9)
 
     expected = np.zeros(9, dtype=np.float32)
     expected[3 - 1] = 1
@@ -74,7 +74,7 @@ def test_get_labels_missing_second_and_third():
     })
     fake_config = {"dataset": {"num_classes": 9}}
 
-    result = get_labels(reference_df, idx=1, config=fake_config)
+    result = get_labels(reference_df, idx=1, expected_num_classes=9)
 
     expected = np.zeros(9, dtype=np.float32)
     expected[4 - 1] = 1
@@ -89,15 +89,12 @@ def test_downsample_output_length_and_shape():
     n_channels = 4
     signal = make_signal(n_samples=n_samples, n_channels=n_channels)
 
-    fake_config = {
-        "dataset": {"sampling_rate": 500},
-        "preprocess": {"downsampled_rate": 250},
-    }
+    original_fs = 500
+    target_fs = 250
+    filter_params = {"sampling_rate": original_fs, "downsampled_rate": target_fs}
 
-    result = _downsample(signal, config=fake_config)
-
-    original_fs = fake_config["dataset"]["sampling_rate"]
-    target_fs = fake_config["preprocess"]["downsampled_rate"]
+    result = _downsample(signal, filter_params=filter_params)
+    
     g = gcd(original_fs, target_fs)
     up = target_fs // g
     down = original_fs // g
