@@ -58,3 +58,5 @@ def preprocess_dataset(segment_size, overlap_ratio, num_pat,
             expected_num_classes )
     print_processed_label_statistics(save_path, expected_num_classes)
 
+    return {"processed": processed, "skipped": skipped}
+

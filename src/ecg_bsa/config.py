@@ -19,7 +19,7 @@ def get_config():
         },
         "raw_dataset": {
             "num_subjects" : 6877,
-            "sampling_rate" : 500
+            "name" : "Physionet Challenge China 2018"
 
         },
 
