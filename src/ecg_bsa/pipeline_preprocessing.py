@@ -31,7 +31,7 @@ def preprocess_dataset(segment_size, overlap_ratio, num_pat,
     signals_path = os.path.join(raw_path, "Training_WFDB")
     ref_path = os.path.join(raw_path, "REFERENCE.csv")
     reference_df = pd.read_csv(ref_path)
-    clear_processed_files(save_path)
+    #clear_processed_files(save_path)
 
 
     futures = process_subject.map(range(1, num_pat + 1),
