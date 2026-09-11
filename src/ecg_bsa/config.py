@@ -24,7 +24,6 @@ def get_config():
         },
 
         "dataset": {
-            "name": "example",
             "input_channels": 12,
             "segment_length": 1500,
             "num_classes": 9,
