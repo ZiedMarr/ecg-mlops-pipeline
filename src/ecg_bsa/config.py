@@ -10,7 +10,7 @@ def get_config():
             "PROJECT_NAME": "ecg-classification"
         },
         "paths": {
-            "raw_data": "./data/raw/",
+            "raw_data": "./tests/datatest/",
             "processed_data": "./data/processed/",
             "outputs": "./outputs/",
             "checkpoints": "./outputs/models/",

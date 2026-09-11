@@ -17,3 +17,4 @@ DLBSA_Official_Presentation.pptx
 wandb/
 visualization/
 *.pyc
+tmp/
